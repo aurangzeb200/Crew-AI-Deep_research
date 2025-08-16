@@ -1,0 +1,36 @@
+[project]
+name = "my_first_crew"
+version = "0.1.0"
+description = "my_first_crew using crewAI"
+authors = [{ name = "Your Name", email = "you@example.com" }]
+requires-python = ">=3.10,<3.14"
+dependencies = [
+    "beautifulsoup4>=4.13.4",
+    "crewai-tools>=0.60.0",
+    "crewai[tools]>=0.157.0,<1.0.0",
+    "fastapi>=0.116.1",
+    "google-genai>=1.29.0",
+    "langchain-google-genai>=2.1.9",
+    "nest-asyncio>=1.6.0",
+    "playwright>=1.54.0",
+    "python-dotenv>=1.1.1",
+    "requests>=2.32.4",
+    "tldextract>=5.3.0",
+    "ujson>=5.10.0",
+    "uvicorn>=0.35.0",
+]
+
+[project.scripts]
+my_first_crew = "my_first_crew.main:run"
+run_crew = "my_first_crew.main:run"
+train = "my_first_crew.main:train"
+replay = "my_first_crew.main:replay"
+test = "my_first_crew.main:test"
+serve = "my_first_crew.server:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.crewai]
+type = "crew"

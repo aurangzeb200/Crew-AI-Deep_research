@@ -1,0 +1,313 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#0b1220"/>
+    <title>Competitor AI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs/%3E%3Ccircle cx='32' cy='32' r='30' fill='%231a2442'/%3E%3Cpath fill='%23a78bfa' d='M32 10a2 2 0 0 1 2 2v6a2 2 0 1 1-4 0v-6a2 2 0 0 1 2-2Zm16.97 5.03a2 2 0 0 1 0 2.83l-4.24 4.24a2 2 0 0 1-2.83-2.83l4.24-4.24a2 2 0 0 1 2.83 0ZM54 30a2 2 0 1 1 0 4h-6a2 2 0 1 1 0-4h6Zm-9.27 16.9a2 2 0 0 1-2.83 0l-4.24-4.24a2 2 0 0 1 2.83-2.83l4.24 4.24a2 2 0 0 1 0 2.83ZM32 46a2 2 0 0 1 2 2v6a2 2 0 1 1-4 0v-6a2 2 0 0 1 2-2Zm-9.66-5.34a2 2 0 0 1 0 2.83l-4.24 4.24a2 2 0 1 1-2.83-2.83l4.24-4.24a2 2 0 0 1 2.83 0ZM16 30a2 2 0 1 1 0 4H10a2 2 0 1 1 0-4h6Zm5.9-9.27a2 2 0 0 1-2.83-2.83l4.24-4.24a2 2 0 0 1 2.83 2.83L21.9 20.73Z'/%3E%3Cpath fill='%2369d6e8' d='M20 34c0-6.627 5.373-12 12-12 4.418 0 8.282 2.407 10.34 6h3.297C43.342 22.41 38.1 18 32 18c-8.837 0-16 7.163-16 16 0 1.153.12 2.276.349 3.363L20 34Z' opacity='.8'/%3E%3C/svg%3E"/>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.5/dist/purify.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+      body { font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif; }
+      .aurora {
+        position: fixed; inset: 0; pointer-events: none; overflow: hidden;
+      }
+      .aurora > i {
+        position: absolute; filter: blur(60px); opacity: .35; border-radius: 9999px;
+        animation: float 18s ease-in-out infinite;
+      }
+      .aurora .a1 { background: #4f46e5; width: 55vw; height: 55vw; top: -10%; left: -10%; }
+      .aurora .a2 { background: #06b6d4; width: 45vw; height: 45vw; bottom: -10%; right: -5%; animation-delay: -6s; }
+      .aurora .a3 { background: #22c55e; width: 35vw; height: 35vw; top: 40%; left: 60%; animation-delay: -12s; }
+      @keyframes float { 0%,100% { transform: translateY(0) } 50% { transform: translateY(-30px) } }
+      .grid-mask {
+        background-image: linear-gradient(to right, rgba(148,163,184,.12) 1px, transparent 1px),
+                          linear-gradient(to bottom, rgba(148,163,184,.12) 1px, transparent 1px);
+        background-size: 24px 24px; mask-image: radial-gradient(ellipse at center, black 40%, transparent 70%);
+      }
+      .step-dot { transition: transform .25s ease, background-color .25s ease, box-shadow .25s ease; }
+      .step-active .step-dot { transform: scale(1.3); box-shadow: 0 0 0 6px rgba(99,102,241,.18); }
+      .btn-shine { position: relative; overflow: hidden; isolation: isolate; }
+      .btn-shine::after { content: ""; position: absolute; inset: 0; background: linear-gradient(120deg, transparent, rgba(255,255,255,.25), transparent); transform: translateX(-100%); }
+      .btn-shine:hover::after { transform: translateX(100%); transition: transform .8s ease; }
+    </style>
+  </head>
+  <body class="min-h-screen bg-slate-950 text-slate-100 relative">
+    <div class="aurora" aria-hidden="true">
+      <i class="a1"></i>
+      <i class="a2"></i>
+      <i class="a3"></i>
+    </div>
+    <div class="grid-mask pointer-events-none fixed inset-0"></div>
+
+    <div class="max-w-5xl mx-auto px-4 py-10 relative">
+      <header class="flex items-center justify-between py-4">
+        <div class="flex items-center gap-3">
+          <div class="size-9 rounded-xl bg-indigo-600/20 border border-indigo-400/30 grid place-items-center">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" class="text-indigo-300"><path d="M12 3v3M12 18v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M3 12h3M18 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="12" cy="12" r="4.5" stroke="currentColor" stroke-width="1.5"/></svg>
+          </div>
+          <h1 class="text-2xl md:text-3xl font-extrabold tracking-tight">Competitor <span class="text-indigo-400">AI</span></h1>
+        </div>
+        <div class="flex items-center gap-3">
+          <a class="text-sm text-slate-300 hover:text-white" href="#" id="docs-link" aria-label="Docs">Docs</a>
+        </div>
+      </header>
+
+      <main class="relative rounded-2xl border border-slate-800 bg-slate-900/60 backdrop-blur shadow-2xl">
+        <div class="absolute inset-x-0 top-0 h-1.5 bg-slate-800">
+          <div id="progress" class="h-1.5 w-0 bg-gradient-to-r from-indigo-500 via-cyan-400 to-emerald-400 transition-all duration-500"></div>
+        </div>
+
+        <div class="p-6 md:p-8">
+          <p class="text-slate-300 mb-6 text-[15px]">Enter a company to explore, research, and analyze. We’ll generate a polished markdown report you can preview and download.</p>
+        <form id="start-form" class="flex flex-col md:flex-row gap-3">
+            <div class="relative flex-1">
+              <span class="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M11 19a8 8 0 1 1 8-8" stroke="currentColor" stroke-width="1.5"/><path d="m20 20-3.5-3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+              </span>
+              <input id="company-input" type="text" placeholder="e.g., OpenAI" class="w-full rounded-lg bg-slate-800/80 border border-slate-700 pl-10 pr-4 py-3 outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30" required />
+            </div>
+            <button id="start-btn" class="btn-shine rounded-lg bg-indigo-600 hover:bg-indigo-500 px-5 py-3 font-semibold shadow-md shadow-indigo-900/40">Start Analysis</button>
+        </form>
+          <div class="flex gap-2 mt-3 text-xs text-slate-400">
+            <button data-example="OpenAI" class="ex-chip px-2.5 py-1 rounded-md bg-slate-800/60 border border-slate-700 hover:border-slate-600">OpenAI</button>
+            <button data-example="Anthropic" class="ex-chip px-2.5 py-1 rounded-md bg-slate-800/60 border border-slate-700 hover:border-slate-600">Anthropic</button>
+            <button data-example="Google" class="ex-chip px-2.5 py-1 rounded-md bg-slate-800/60 border border-slate-700 hover:border-slate-600">Google</button>
+          </div>
+
+        <section class="mt-8">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div id="step-exploring" class="step rounded-xl border border-slate-800 bg-slate-900/60 p-4">
+              <div class="flex items-center gap-3">
+                <div class="step-dot size-3 rounded-full bg-slate-600" aria-hidden="true"></div>
+                  <h3 class="font-semibold flex items-center gap-2">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" class="text-slate-300"><path d="M3 6h18M3 12h18M3 18h18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+                    Exploring
+                  </h3>
+              </div>
+              <p class="text-sm text-slate-400 mt-2">Discovering sources and sites.</p>
+            </div>
+              <div id="step-researching" class="step rounded-xl border border-slate-800 bg-slate-900/60 p-4">
+              <div class="flex items-center gap-3">
+                <div class="step-dot size-3 rounded-full bg-slate-600" aria-hidden="true"></div>
+                  <h3 class="font-semibold flex items-center gap-2">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" class="text-slate-300"><path d="M4 7h16M4 12h16M4 17h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+                    Researching
+                  </h3>
+              </div>
+              <p class="text-sm text-slate-400 mt-2">Gathering information across the web.</p>
+            </div>
+              <div id="step-analyzing" class="step rounded-xl border border-slate-800 bg-slate-900/60 p-4">
+              <div class="flex items-center gap-3">
+                <div class="step-dot size-3 rounded-full bg-slate-600" aria-hidden="true"></div>
+                  <h3 class="font-semibold flex items-center gap-2">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" class="text-slate-300"><path d="M4 18V8m0 10c3-2.5 5.5-4 8-4s5 1.5 8 4M4 8c3-2.5 5.5-4 8-4s5 1.5 8 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+                    Analyzing
+                  </h3>
+              </div>
+              <p class="text-sm text-slate-400 mt-2">Summarizing insights into a report.</p>
+            </div>
+          </div>
+        </section>
+
+        <section id="result-section" class="mt-8 hidden">
+            <div class="rounded-xl border border-slate-800 bg-slate-900/60 overflow-hidden">
+              <div class="flex items-center justify-between p-3 md:p-4 border-b border-slate-800">
+                <div class="flex items-center gap-2">
+              <h3 class="font-semibold">Result</h3>
+                  <span id="file-pill" class="hidden text-xs px-2 py-0.5 rounded-full bg-slate-800 border border-slate-700 text-slate-300"></span>
+                </div>
+              <div class="flex gap-2">
+                  <div class="inline-flex rounded-md border border-slate-800 bg-slate-950/60 p-0.5">
+                    <button id="tab-preview" class="tab-btn text-xs px-2 py-1 rounded [--on:theme(colors.slate.200)] [--off:theme(colors.slate.400)] bg-slate-800 text-slate-200">Preview</button>
+                    <button id="tab-raw" class="tab-btn text-xs px-2 py-1 rounded text-slate-400 hover:text-slate-200">Markdown</button>
+                  </div>
+                  <a id="download-link" href="#" class="hidden rounded-md bg-emerald-600 hover:bg-emerald-500 px-3 py-1.5 text-xs md:text-sm font-semibold">Download</a>
+                  <button id="copy-btn" class="hidden rounded-md bg-slate-700 hover:bg-slate-600 px-3 py-1.5 text-xs md:text-sm">Copy</button>
+                </div>
+              </div>
+              <div class="p-4">
+                <div id="preview-view" class="prose prose-invert max-w-none prose-headings:scroll-mt-20">
+                  <p class="text-slate-400 text-sm">Your analysis preview will appear here.</p>
+                </div>
+                <pre id="result-view" class="hidden overflow-x-auto mt-4 p-4 text-slate-200 whitespace-pre-wrap text-sm max-h-[60vh] rounded-lg bg-slate-950/60 border border-slate-800"></pre>
+              </div>
+            </div>
+          </section>
+          </div>
+      </main>
+
+      <footer class="text-center text-slate-400 text-sm mt-8">Built with FastAPI, CrewAI, and Tailwind</footer>
+    </div>
+
+    <div id="toast" class="fixed left-1/2 -translate-x-1/2 bottom-6 hidden">
+      <div class="rounded-lg bg-slate-900/90 border border-slate-700 px-4 py-2 text-sm shadow-xl">Copied to clipboard</div>
+    </div>
+
+    <script>
+      const form = document.getElementById('start-form');
+      const input = document.getElementById('company-input');
+      const startBtn = document.getElementById('start-btn');
+      const steps = {
+        exploring: document.getElementById('step-exploring'),
+        researching: document.getElementById('step-researching'),
+        analyzing: document.getElementById('step-analyzing'),
+      };
+      const progress = document.getElementById('progress');
+      const resultSection = document.getElementById('result-section');
+      const resultView = document.getElementById('result-view');
+      const previewView = document.getElementById('preview-view');
+      const downloadLink = document.getElementById('download-link');
+      const copyBtn = document.getElementById('copy-btn');
+      const filePill = document.getElementById('file-pill');
+      const tabPreview = document.getElementById('tab-preview');
+      const tabRaw = document.getElementById('tab-raw');
+      const toast = document.getElementById('toast');
+
+      function setStage(active) {
+        Object.entries(steps).forEach(([name, el]) => {
+          const dot = el.querySelector('.step-dot');
+          if (name === active) {
+            el.classList.add('step-active');
+            dot.classList.remove('bg-slate-600');
+            dot.classList.add('bg-indigo-400');
+          } else {
+            el.classList.remove('step-active');
+            dot.classList.add('bg-slate-600');
+            dot.classList.remove('bg-indigo-400');
+          }
+        });
+        // progress bar approx mapping
+        const map = { exploring: 0.28, researching: 0.62, analyzing: 0.85 };
+        progress.style.width = `${Math.floor((map[active] || 0) * 100)}%`;
+      }
+
+      function showToast(msg) {
+        toast.querySelector('div').textContent = msg;
+        toast.classList.remove('hidden');
+        setTimeout(() => toast.classList.add('hidden'), 1200);
+      }
+
+      function renderMarkdown(markdownText) {
+        const html = DOMPurify.sanitize(marked.parse(markdownText || ''));
+        previewView.innerHTML = html || '<p class="text-slate-400 text-sm">No content.</p>';
+      }
+
+      async function poll(jobId) {
+        for (;;) {
+          const res = await fetch(`/api/status/${jobId}`);
+          if (!res.ok) break;
+          const data = await res.json();
+          const stage = data.stage;
+          if ([ 'exploring', 'researching', 'analyzing' ].includes(stage)) setStage(stage);
+          if (stage === 'done') {
+            setStage('analyzing');
+            progress.style.width = '100%';
+            if (data.file) {
+              const txtRes = await fetch(`/api/output/${encodeURIComponent(data.file)}`);
+              const text = await txtRes.text();
+              resultView.textContent = text;
+              renderMarkdown(text);
+              downloadLink.href = `/api/download/${encodeURIComponent(data.file)}`;
+              downloadLink.classList.remove('hidden');
+              copyBtn.classList.remove('hidden');
+              filePill.textContent = data.file;
+              filePill.classList.remove('hidden');
+              resultSection.classList.remove('hidden');
+              if (window.confetti) {
+                confetti({ particleCount: 90, spread: 70, origin: { y: 0.25 } });
+              }
+            }
+            break;
+          }
+          if (stage === 'error') {
+            resultView.textContent = data.message || 'Unknown error';
+            renderMarkdown('');
+            tabRaw.click();
+            resultSection.classList.remove('hidden');
+            break;
+          }
+          await new Promise(r => setTimeout(r, 1500));
+        }
+      }
+
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const company = input.value.trim();
+        if (!company) return;
+
+        // reset UI
+        resultView.textContent = '';
+        renderMarkdown('');
+        resultSection.classList.add('hidden');
+        downloadLink.classList.add('hidden');
+        copyBtn.classList.add('hidden');
+        filePill.classList.add('hidden');
+        setStage('exploring');
+        progress.style.width = '6%';
+
+        startBtn.disabled = true;
+        startBtn.textContent = 'Working…';
+        try {
+          const res = await fetch('/api/start', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ company })
+          });
+          const data = await res.json();
+          if (res.ok && data.job_id) {
+            poll(data.job_id);
+          } else {
+            resultView.textContent = data.detail || 'Failed to start job';
+            tabRaw.click();
+            resultSection.classList.remove('hidden');
+          }
+        } catch (err) {
+          resultView.textContent = String(err);
+          tabRaw.click();
+          resultSection.classList.remove('hidden');
+        } finally {
+          startBtn.disabled = false;
+          startBtn.textContent = 'Start Analysis';
+        }
+      });
+
+      copyBtn.addEventListener('click', async () => {
+        try {
+          await navigator.clipboard.writeText(resultView.textContent);
+          showToast('Copied to clipboard');
+        } catch {}
+      });
+
+      // Tabs
+      tabPreview.addEventListener('click', () => {
+        tabPreview.classList.add('bg-slate-800','text-slate-200');
+        tabRaw.classList.remove('bg-slate-800','text-slate-200');
+        tabRaw.classList.add('text-slate-400');
+        previewView.classList.remove('hidden');
+        resultView.classList.add('hidden');
+      });
+      tabRaw.addEventListener('click', () => {
+        tabRaw.classList.add('bg-slate-800','text-slate-200');
+        tabPreview.classList.remove('bg-slate-800','text-slate-200');
+        tabPreview.classList.add('text-slate-400');
+        resultView.classList.remove('hidden');
+        previewView.classList.add('hidden');
+      });
+
+      // Example chips
+      document.querySelectorAll('.ex-chip').forEach(btn => btn.addEventListener('click', () => {
+        input.value = btn.dataset.example || '';
+        input.focus();
+      }));
+    </script>
+  </body>
+  </html>
+
+

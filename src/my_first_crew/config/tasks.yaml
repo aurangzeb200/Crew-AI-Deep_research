@@ -1,0 +1,68 @@
+crawl_task:
+  description: >
+    Seacrh on internet like this "{company} products page" and get the correct urls of page Product of {company}.
+    Choose only one url from the function response that best represent the products.
+    Choose the {company}'s url that is most focused on product releases and updates, not developer integration or API documentation from function response of search tool or function.
+    The chosen url should be correct and accurate like how tools accepted. Pass that url as argument in fast_web_cawler.
+    When calling fast_web_crawler, always pass:
+    {
+      "url": "https://example.com"
+    }
+    And then do all the same for services page as we did for products first search and then crawl.
+  expected_output: >
+    A clean, structured dataset like with headings and paragraphs and bullet points whatever bt it should be good.
+  agent: crawler_agent
+  
+
+news_task:
+  description: >
+    Conduct a thorough, investigative search on {company} with a focus on extracting competitor-relevant insights.
+    This should include {company}’s mission, vision, strategic goals, core products/services, target markets,
+    growth strategies, partnerships, financial performance (if available), and positioning within its industry.
+    Pay special attention to controversies, public criticisms, legal issues, market challenges, and any
+    reputational risks. Compare findings to key competitors, identifying opportunities, weaknesses, or gaps
+    that could be leveraged for competitive advantage.
+  expected_output: >
+    A well-structured competitor analysis report, organized into sections such as:
+    1. Company Overview & Mission
+    2. Goals, Strategies & Target Market
+    3. Product/Service Portfolio
+    4. Competitive Positioning & Differentiators
+    5. Financial & Market Performance (if data available)
+    6. Partnerships & Alliances
+    7. Controversies, Legal Issues & Criticisms
+    8. Key Opportunities & Threats vs Competitors
+  agent: news_agent
+
+
+
+summary_task:
+  description: >
+    Using the combined findings from the 'news_task' and 'crawl_task', produce a comprehensive, 
+    well-structured competitor intelligence report on {company}. 
+    The goal is not to summarize, but to synthesize and integrate all gathered information into 
+    a cohesive analysis that delivers actionable insights for strategic decision-making.
+    The report should:
+      - Merge and cross-verify information from multiple sources (news articles, press releases, 
+        official websites, regulatory filings, product pages, investor reports, blogs, and social media).
+      - Highlight {company}’s mission, vision, strategic goals, target market, product/service portfolio,
+        unique selling points, pricing and positioning strategies, market share (if available), 
+        and recent business moves.
+      - Detail competitive landscape: key competitors, differentiators, overlaps, and threats.
+      - Identify controversies, reputational risks, and regulatory/legal challenges.
+      - Pinpoint opportunities, gaps, or weaknesses that can be exploited from a competitor’s perspective.
+      - Include timelines, patterns, or trends relevant to {company}’s market behavior.
+  expected_output: >
+    A professional competitor intelligence report with clearly labeled sections:
+      1. Executive Summary
+      2. Company Overview
+      3. Mission, Vision & Strategic Goals
+      4. Product/Service Portfolio & Innovations
+      5. Target Market & Customer Segments
+      6. Market Positioning & Pricing Strategy
+      7. Financial & Growth Insights (if data available)
+      8. Competitive Landscape & Key Differentiators
+      9. Controversies, Legal Issues & Public Perception
+      10. Opportunities, Threats & Strategic Recommendations
+      11. Sources & References
+  agent: summarizer_agent
